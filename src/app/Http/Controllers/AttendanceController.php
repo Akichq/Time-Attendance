@@ -1,0 +1,286 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Attendance;
+use App\Models\BreakTime;
+use Carbon\Carbon;
+use App\Http\Requests\UpdateAttendanceRequest;
+use App\Models\AttendanceCorrection;
+use Illuminate\Support\Facades\Log;
+
+class AttendanceController extends Controller
+{
+    /**
+     * 勤怠打刻画面を表示します。
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $today = Carbon::today();
+
+        // 今日の最新の勤怠記録を取得
+        $latestAttendance = Attendance::where('user_id', $user->id)
+            ->whereDate('clock_in_time', $today)
+            ->latest('clock_in_time')
+            ->first();
+
+        $attendanceStatus = 'before_work'; // デフォルトは出勤前
+
+        if ($latestAttendance) {
+            if (!$latestAttendance->clock_out_time) {
+                // 出勤中
+                $latestBreak = $latestAttendance->breaks()->latest('break_start_time')->first();
+                if ($latestBreak && !$latestBreak->break_end_time) {
+                    $attendanceStatus = 'on_break'; // 休憩中
+                } else {
+                    $attendanceStatus = 'at_work'; // 勤務中
+                }
+            } else {
+                // 退勤後
+                $attendanceStatus = 'after_work';
+            }
+        }
+
+        return view('attendance.index', compact('attendanceStatus'));
+    }
+
+    /**
+     * 出勤を記録します。
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function clockIn(Request $request)
+    {
+        $user = Auth::user();
+
+        // 既に本日出勤済みか確認
+        $existingAttendance = Attendance::where('user_id', $user->id)
+            ->whereDate('clock_in_time', Carbon::today())
+            ->first();
+
+        if ($existingAttendance) {
+            return redirect()->back()->with('error', '本日は既に出勤打刻済みです。');
+        }
+
+        Attendance::create([
+            'user_id' => $user->id,
+            'clock_in_time' => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', '出勤しました。');
+    }
+
+    /**
+     * 退勤を記録します。
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function clockOut(Request $request)
+    {
+        $user = Auth::user();
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('clock_in_time', Carbon::today())
+            ->whereNull('clock_out_time')
+            ->first();
+
+        if (!$attendance) {
+            return redirect()->back()->with('error', '出勤記録が見つかりません。');
+        }
+        
+        // 休憩中であれば退勤できないようにする
+        $latestBreak = $attendance->breaks()->latest('break_start_time')->first();
+        if ($latestBreak && !$latestBreak->break_end_time) {
+            return redirect()->back()->with('error', '休憩中です。退勤する前に休憩を終了してください。');
+        }
+
+        $attendance->update([
+            'clock_out_time' => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', '退勤しました。');
+    }
+
+    /**
+     * 休憩開始を記録します。
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function breakStart(Request $request)
+    {
+        $user = Auth::user();
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('clock_in_time', Carbon::today())
+            ->whereNull('clock_out_time')
+            ->first();
+
+        if (!$attendance) {
+            return redirect()->back()->with('error', '出勤記録が見つかりません。');
+        }
+
+        // 既に休憩中の場合は何もしない
+        $existingBreak = $attendance->breaks()->whereNull('break_end_time')->first();
+        if ($existingBreak) {
+            return redirect()->back()->with('error', '既に休憩中です。');
+        }
+
+        $attendance->breaks()->create([
+            'break_start_time' => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', '休憩を開始しました。');
+    }
+
+    /**
+     * 休憩終了を記録します。
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function breakEnd(Request $request)
+    {
+        $user = Auth::user();
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('clock_in_time', Carbon::today())
+            ->whereNull('clock_out_time')
+            ->first();
+
+        if (!$attendance) {
+            return redirect()->back()->with('error', '出勤記録が見つかりません。');
+        }
+
+        $break = $attendance->breaks()
+            ->whereNull('break_end_time')
+            ->latest('break_start_time')
+            ->first();
+
+        if (!$break) {
+            return redirect()->back()->with('error', '開始された休憩が見つかりません。');
+        }
+
+        $break->update([
+            'break_end_time' => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', '休憩を終了しました。');
+    }
+
+    /**
+     * 勤怠一覧画面を表示します。
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function list(Request $request)
+    {
+        // クエリパラメータから月を取得、なければ現在の月
+        $month = $request->input('month', Carbon::now()->format('Y-m'));
+        $targetMonth = Carbon::createFromFormat('Y-m-d', $month . '-01');
+        // 指定月の日数を取得
+        $daysInMonth = $targetMonth->daysInMonth;
+        // 1日から月末までの配列を生成
+        $calendarDays = [];
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = Carbon::create($targetMonth->year, $targetMonth->month, $day);
+            $calendarDays[] = $date;
+        }
+
+        // 前月と翌月の情報を生成
+        $previousMonth = $targetMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $targetMonth->copy()->addMonth()->format('Y-m');
+
+        // ログインユーザーの指定された月の勤怠データを取得し、日付をキーとした配列に変換
+        $user = Auth::user();
+        $attendances = Attendance::with('breaks')
+            ->where('user_id', $user->id)
+            ->whereYear('clock_in_time', $targetMonth->year)
+            ->whereMonth('clock_in_time', $targetMonth->month)
+            ->get()
+            ->keyBy(function ($attendance) {
+                return $attendance->clock_in_time->format('Y-m-d');
+            });
+
+        // 各勤怠データに合計時間（出勤〜退勤＋休憩合計）をセット
+        foreach ($attendances as $attendance) {
+            $clockIn = $attendance->clock_in_time ? new \Carbon\Carbon($attendance->clock_in_time) : null;
+            $clockOut = $attendance->clock_out_time ? new \Carbon\Carbon($attendance->clock_out_time) : null;
+            $breakSeconds = $attendance->breaks->sum(function ($break) {
+                if ($break->break_start_time && $break->break_end_time) {
+                    return (new \Carbon\Carbon($break->break_end_time))->diffInSeconds(new \Carbon\Carbon($break->break_start_time));
+                }
+                return 0;
+            });
+            $workSeconds = ($clockIn && $clockOut) ? $clockOut->diffInSeconds($clockIn) : 0;
+            $totalSeconds = $workSeconds + $breakSeconds;
+            $attendance->total_time = sprintf('%02d:%02d', floor($totalSeconds / 3600), floor(($totalSeconds % 3600) / 60));
+        }
+
+        return view('attendance.list', compact('calendarDays', 'attendances', 'targetMonth', 'previousMonth', 'nextMonth'));
+    }
+
+    /**
+     * 勤怠詳細画面を表示します。
+     *
+     * @param Attendance $attendance
+     * @return \Illuminate\View\View
+     */
+    public function show(Attendance $attendance)
+    {
+        if (auth('admin')->check()) {
+            // 管理者は全て閲覧可能
+            $attendance->load('user', 'breaks');
+            $breaks = $attendance->breaks;
+            return view('admin.attendance.detail', compact('attendance', 'breaks'));
+        }
+        if (Auth::id() !== $attendance->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $attendance->load('user', 'breaks');
+        $breaks = $attendance->breaks;
+
+        $pendingCorrection = AttendanceCorrection::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+        $isPending = !is_null($pendingCorrection);
+
+        return view('attendance.detail', compact('attendance', 'breaks', 'isPending', 'pendingCorrection'));
+    }
+
+    /**
+     * 勤怠修正申請を処理します。
+     *
+     * @param UpdateAttendanceRequest $request
+     * @param Attendance $attendance
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function requestUpdate(UpdateAttendanceRequest $request, Attendance $attendance)
+    {
+        if (Auth::id() !== $attendance->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 修正申請データを作成
+        $correction = AttendanceCorrection::create([
+            'attendance_id' => $attendance->id,
+            'user_id' => Auth::id(),
+            'requested_clock_in_time' => $request->clock_in_time,
+            'requested_clock_out_time' => $request->clock_out_time,
+            'requested_breaks' => json_encode(['existing' => $request->breaks, 'new' => $request->new_breaks]),
+            'remarks' => $request->remarks ?? '',
+            'status' => 'pending',
+        ]);
+
+        // 詳細画面にリダイレクト
+        return redirect()->route('attendance.show', ['attendance' => $attendance->id]);
+    }
+} 

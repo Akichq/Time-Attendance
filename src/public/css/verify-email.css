@@ -1,0 +1,81 @@
+body {
+    background: #fff;
+    margin: 0;
+}
+
+.verify-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.verify-message-main {
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.verify-message-main + .verify-message-main {
+    margin-top: 24px;
+    margin-bottom: 32px;
+}
+
+.verify-btn {
+    width: 220px;
+    background: #eee;
+    color: #222;
+    border: 1px solid #888;
+    padding: 12px 0;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 24px;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+}
+
+.verify-btn:hover {
+    background: #e0e0e0;
+}
+
+.verify-link {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.resend-link:hover {
+    color: #0056b3;
+}
+
+.success-message {
+    color: #090;
+    font-size: 0.95em;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.error-message {
+    color: #e00;
+    font-size: 0.95em;
+    margin-top: 4px;
+    text-align: center;
+} 

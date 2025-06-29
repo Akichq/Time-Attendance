@@ -1,0 +1,52 @@
+body {
+    background: #f6f6f6;
+    margin: 0;
+}
+.header-app {
+    background: #000;
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+.header-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.header-logo-app {
+    height: 32px;
+    margin-left: 24px;
+}
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-right: 32px;
+}
+.header-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+}
+.header-nav a:hover {
+    opacity: 0.7;
+}
+.header-nav-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+main {
+    min-height: 80vh;
+}

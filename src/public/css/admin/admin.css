@@ -1,0 +1,135 @@
+body.admin-body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+.admin-header {
+    background-color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+}
+
+.admin-header__logo {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    min-width: 180px;
+    margin-right: 32px;
+}
+
+.admin-header__logo h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.admin-header__logo img {
+    height: 25px;
+    vertical-align: middle;
+    filter: brightness(0) invert(1);
+}
+
+.admin-header__nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.admin-header__nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.admin-header__nav-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.admin-main {
+    padding: 30px 40px;
+}
+
+.attendance-list__content {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.attendance-list__heading {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.attendance-list__heading h2 {
+    font-size: 24px;
+}
+
+.date-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.date-nav__current {
+    margin: 0 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.date-nav__button {
+    text-decoration: none;
+    color: #007bff;
+    padding: 5px 10px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+}
+
+.attendance-table-container {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.attendance-table th,
+.attendance-table td {
+    border-bottom: 1px solid #dee2e6;
+    padding: 15px;
+}
+
+.attendance-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.attendance-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}

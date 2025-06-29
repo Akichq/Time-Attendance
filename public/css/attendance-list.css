@@ -1,0 +1,83 @@
+/* 勤怠一覧画面専用CSS */
+
+.list-main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.list-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    border-left: 5px solid #000;
+}
+
+.month-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+}
+
+.month-navigation__current-month {
+    margin: 0 40px;
+    font-weight: bold;
+}
+
+.month-navigation__link--previous,
+.month-navigation__link--next {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    padding: 5px 15px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.month-navigation__link--previous:hover,
+.month-navigation__link--next:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.attendance-list-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.attendance-table__header th {
+    padding: 15px;
+    border-bottom: 2px solid #ddd;
+    font-weight: bold;
+}
+
+.attendance-table__body td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.attendance-table__body tr:last-child td {
+    border-bottom: none;
+}
+
+.attendance-table__body a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.attendance-table__body a:hover {
+    text-decoration: underline;
+} 

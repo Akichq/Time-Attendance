@@ -1,0 +1,108 @@
+.request-list-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #f7f7f8;
+    padding: 0 24px 40px 24px;
+}
+
+.request-list-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 32px 0 32px 0;
+    padding-left: 12px;
+    border-left: 5px solid #111;
+    color: #111;
+    letter-spacing: 0.05em;
+}
+
+.request-list-tabs {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 0;
+    background: none;
+}
+
+.request-tab {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #888;
+    padding: 10px 0 8px 0;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-bottom 0.2s;
+    outline: none;
+}
+.request-tab.active {
+    color: #111;
+    border-bottom: 3px solid #111;
+}
+
+.request-list-divider {
+    border: none;
+    border-bottom: 2px solid #aaa;
+    margin: 0 0 24px 0;
+}
+
+.request-list-table-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 0 0 24px 0;
+}
+
+.request-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 1rem;
+    background: #fff;
+}
+.request-list-table th, .request-list-table td {
+    padding: 16px 8px;
+    border-bottom: 1px solid #eee;
+}
+.request-list-table th {
+    background: #fff;
+    font-weight: bold;
+    color: #222;
+    font-size: 1.05rem;
+}
+.request-list-table tr:last-child td {
+    border-bottom: none;
+}
+.request-detail-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+}
+.request-detail-link:hover {
+    text-decoration: underline;
+}
+.request-list-empty {
+    color: #888;
+    text-align: center;
+    padding: 32px 0;
+    font-size: 1.05rem;
+}
+
+@media (max-width: 768px) {
+    .request-list-container {
+        max-width: 100%;
+        padding: 0 4vw 24px 4vw;
+    }
+    .request-list-title {
+        font-size: 1.2rem;
+        margin: 20px 0 20px 0;
+        padding-left: 8px;
+    }
+    .request-list-tabs {
+        gap: 16px;
+    }
+    .request-list-table th, .request-list-table td {
+        padding: 10px 4px;
+        font-size: 0.95rem;
+    }
+} 

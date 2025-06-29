@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,8 +22,12 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
+        Carbon::setLocale(config('app.locale'));
+        Carbon::macro('jaWeekday', function () {
+            $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            return $weekdays[$this->dayOfWeek];
+        });
     }
 }

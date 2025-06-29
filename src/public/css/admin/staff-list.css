@@ -1,0 +1,80 @@
+body {
+    background: #f5f5f7;
+    margin: 0;
+}
+
+.staff-list-container {
+    max-width: 900px;
+    margin: 48px auto 0;
+    padding: 32px 24px;
+}
+
+.staff-list-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-left: 5px solid #000;
+    padding-left: 16px;
+    margin-bottom: 32px;
+}
+
+.staff-list-table-wrapper {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 0 0 24px 0;
+}
+
+.staff-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    background: #fff;
+}
+
+.staff-list-table th, .staff-list-table td {
+    padding: 16px 12px;
+    text-align: center;
+    background: #fff;
+}
+
+.staff-list-table th {
+    color: #888;
+    font-weight: bold;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.staff-list-table td {
+    color: #888;
+}
+
+.staff-list-table td:last-child {
+    color: #000;
+    font-weight: bold;
+}
+
+.staff-list-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.staff-list-table th:nth-child(1), .staff-list-table td:nth-child(1) {
+    padding-left: 32px;
+    text-align: center;
+}
+
+.staff-list-table th:nth-child(3), .staff-list-table td:nth-child(3) {
+    padding-right: 32px;
+    text-align: center;
+}
+
+.staff-detail-link {
+    color: #000;
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media (max-width: 1540px) and (min-width: 1400px) {
+    .staff-list-container {
+        max-width: 900px;
+    }
+} 

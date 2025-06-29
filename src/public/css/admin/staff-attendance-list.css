@@ -1,0 +1,138 @@
+body {
+    background: #f5f5f7;
+    margin: 0;
+}
+
+.staff-attendance-container {
+    max-width: 900px;
+    margin: 48px auto 0;
+    padding: 32px 24px;
+}
+
+.staff-attendance-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-left: 5px solid #000;
+    padding-left: 16px;
+    margin-bottom: 32px;
+}
+
+.staff-attendance-header-wrapper {
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    margin-bottom: 16px;
+    padding: 12px 0;
+}
+
+.staff-attendance-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.month-switch-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.month-switch-btn {
+    flex: 1;
+    max-width: 120px;
+    background: #fff;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px 16px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.month-switch-btn:hover {
+    background: #e0e0e0;
+}
+
+.current-month {
+    flex: 2;
+    text-align: center;
+    margin: 0 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: #fff;
+    padding: 4px 24px;
+    border-radius: 4px;
+    letter-spacing: 2px;
+}
+
+.staff-attendance-table-wrapper {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 0 0 24px 0;
+}
+
+.staff-attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    background: #fff;
+}
+
+.staff-attendance-table th, .staff-attendance-table td {
+    padding: 16px 12px;
+    text-align: center;
+    background: #fff;
+    color: #888;
+}
+
+.staff-attendance-table th {
+    font-weight: bold;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.staff-attendance-table td:last-child {
+    color: #000;
+    font-weight: bold;
+}
+
+.staff-attendance-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.attendance-detail-link {
+    color: #000;
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.csv-export-form {
+    text-align: right;
+    margin-top: 24px;
+}
+
+.csv-export-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 32px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: background 0.2s;
+}
+.csv-export-btn:hover {
+    background: #222;
+}
+
+@media (max-width: 1540px) and (min-width: 1400px) {
+    .staff-attendance-container {
+        max-width: 900px;
+    }
+} 

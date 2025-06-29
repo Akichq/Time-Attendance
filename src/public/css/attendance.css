@@ -1,0 +1,106 @@
+.attendance-container {
+    max-width: 400px;
+    margin: 120px auto 0;
+    text-align: center;
+}
+
+.attendance-status {
+    margin-bottom: 40px;
+}
+
+.status-label {
+    display: inline-block;
+    padding: 4px 16px;
+    background-color: #bebebe;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    color: #000000;
+}
+
+.attendance-datetime {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.date {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.time {
+    font-size: 3.5rem;
+    font-weight: bold;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.attendance-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.attendance-btn {
+    width: 200px;
+    padding: 15px 0;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.attendance-btn:hover {
+    opacity: 0.8;
+}
+
+.attendance-btn.clock-in {
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.attendance-btn.break-end {
+    background: #fff;
+    color: #000;
+    border: 1.5px solid #000;
+}
+
+
+.attendance-btn.clock-out {
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.attendance-btn.break-start {
+    background: #fff;
+    color: #000;
+    border: 1.5px solid #000;
+}
+
+.completion-message {
+    margin-top: 40px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+@media (max-width: 480px) {
+    .attendance-container {
+        margin: 40px auto 0;
+        padding: 0 20px;
+    }
+
+    .time {
+        font-size: 3rem;
+    }
+
+    .attendance-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .attendance-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
