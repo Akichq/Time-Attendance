@@ -262,9 +262,15 @@ class AttendanceController extends Controller
 
         // 承認待ち状態の場合、修正申請データをフィールドに表示するためのデータを準備
         if ($isPending && $pendingCorrection) {
-            // 修正申請データをattendanceオブジェクトに一時的に設定
-            $attendance->clock_in_time = $pendingCorrection->requested_clock_in_time;
-            $attendance->clock_out_time = $pendingCorrection->requested_clock_out_time;
+            // 元の勤怠データの日付を保持
+            $originalDate = $attendance->clock_in_time->format('Y-m-d');
+            
+            // 修正申請データの時刻部分のみを取得して、元の日付と組み合わせる
+            $requestedClockInTime = Carbon::parse($pendingCorrection->requested_clock_in_time);
+            $requestedClockOutTime = Carbon::parse($pendingCorrection->requested_clock_out_time);
+            
+            $attendance->clock_in_time = $originalDate . ' ' . $requestedClockInTime->format('H:i:s');
+            $attendance->clock_out_time = $originalDate . ' ' . $requestedClockOutTime->format('H:i:s');
             $attendance->remarks = $pendingCorrection->remarks;
 
             // 修正申請された休憩データを取得

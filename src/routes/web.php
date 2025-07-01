@@ -78,7 +78,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/attendance/staff/{id}/csv', [\App\Http\Controllers\Admin\AttendanceController::class, 'staffAttendanceCsv'])->name('attendance.staff.csv');
 
         Route::patch('/attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'update'])->name('attendance.update');
-        Route::get('/correction/list', [\App\Http\Controllers\AttendanceCorrectionController::class, 'adminList'])->name('correction.list');
         Route::get('/stamp_correction_request/approve/{correction}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'show'])->name('admin.correction.approve');
         Route::patch('/stamp_correction_request/approve/{correction}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'approve'])->name('correction.approve');
         Route::patch('/correction/{correction}/reject', [\App\Http\Controllers\AttendanceCorrectionController::class, 'reject'])->name('correction.reject');
@@ -123,42 +122,42 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/attendance/{attendance}', [App\Http\Controllers\AttendanceController::class, 'requestUpdate'])
         ->name('attendance.requestUpdate');
 
-    // 申請一覧画面（管理者・一般ユーザー共通）
-    Route::get('/stamp_correction_request/list', function() {
-        // 一般ユーザー認証を先にチェック（一般ユーザーがアクセスしている場合）
-        if (auth()->check()) {
-            // 一般ユーザーの場合
-            return app(\App\Http\Controllers\AttendanceCorrectionController::class)->list(request());
-        }
-        
-        // 管理者認証をチェック
-        if (auth('admin')->check()) {
-            // 管理者の場合
-            return app(\App\Http\Controllers\AttendanceCorrectionController::class)->adminList(request());
-        }
-        
-        // 未認証の場合はログイン画面へ
-        return redirect('/login');
-    })->name('correction.list');
-
-    // 修正申請承認画面（管理者・一般ユーザー共通）
-    Route::get('/stamp_correction_request/approve/{correction}', function($correction) {
-        if (auth('admin')->check()) {
-            return app(\App\Http\Controllers\AttendanceCorrectionController::class)->show($correction);
-        }
-        if (auth()->check()) {
-            // 一般ユーザー用のshowメソッドが必要な場合はこちらに実装
-            // 例: return app(\App\Http\Controllers\AttendanceCorrectionController::class)->userShow($correction);
-            abort(403, '一般ユーザー用の詳細画面は未実装です');
-        }
-        return redirect('/login');
-    })->name('correction.approve');
-
     // ログイン後のリダイレクト先を勤怠打刻画面に変更
     Route::get('/dashboard', function () {
         return redirect()->route('attendance.index');
     })->middleware(['auth'])->name('dashboard');
 });
+
+// 申請一覧画面（管理者・一般ユーザー共通）
+Route::get('/stamp_correction_request/list', function() {
+    // 一般ユーザー認証を先にチェック（一般ユーザーがアクセスしている場合）
+    if (auth()->check()) {
+        // 一般ユーザーの場合
+        return app(\App\Http\Controllers\AttendanceCorrectionController::class)->list(request());
+    }
+    
+    // 管理者認証をチェック
+    if (auth('admin')->check()) {
+        // 管理者の場合
+        return app(\App\Http\Controllers\AttendanceCorrectionController::class)->adminList(request());
+    }
+    
+    // 未認証の場合はログイン画面へ（管理者優先）
+    return redirect('/admin/login');
+})->name('correction.list');
+
+// 修正申請承認画面（管理者・一般ユーザー共通）
+Route::get('/stamp_correction_request/approve/{correction}', function($correction) {
+    if (auth('admin')->check()) {
+        return app(\App\Http\Controllers\AttendanceCorrectionController::class)->show($correction);
+    }
+    if (auth()->check()) {
+        // 一般ユーザー用のshowメソッドが必要な場合はこちらに実装
+        // 例: return app(\App\Http\Controllers\AttendanceCorrectionController::class)->userShow($correction);
+        abort(403, '一般ユーザー用の詳細画面は未実装です');
+    }
+    return redirect('/admin/login');
+})->name('correction.approve');
 
 // 共通の勤怠詳細ルート（機能要件通り同じURLパス）
 Route::get('/attendance/{attendance}', function($attendance) {

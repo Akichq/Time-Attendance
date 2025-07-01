@@ -75,11 +75,20 @@ class AttendanceCorrectionController extends Controller
             'admin_remarks' => $request->input('admin_remarks', ''),
         ]);
 
-        // 勤怠データを更新（requested_clock_in_timeは既に「日付＋時刻」形式）
+        // 勤怠データを更新（元の日付を保持し、時刻のみ更新）
         $attendance = $correction->attendance;
+        
+        // 元の勤怠データの日付を取得
+        $originalDate = $attendance->clock_in_time->format('Y-m-d');
+        
+        // 申請された時刻のみを取得（H:i:s形式）
+        $requestedClockInTime = \Carbon\Carbon::parse($correction->requested_clock_in_time)->format('H:i:s');
+        $requestedClockOutTime = \Carbon\Carbon::parse($correction->requested_clock_out_time)->format('H:i:s');
+        
+        // 元の日付＋申請された時刻で更新
         $attendance->update([
-            'clock_in_time' => $correction->requested_clock_in_time,
-            'clock_out_time' => $correction->requested_clock_out_time,
+            'clock_in_time' => $originalDate . ' ' . $requestedClockInTime,
+            'clock_out_time' => $originalDate . ' ' . $requestedClockOutTime,
             'remarks' => $correction->remarks,
         ]);
 
