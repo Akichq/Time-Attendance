@@ -17,11 +17,11 @@
             <table class="attendance-detail-table">
                 <tr>
                     <th>名前</th>
-                    <td>{{ $correction->attendance->user->name ?? '' }}</td>
+                    <td>{{ optional(optional($correction->attendance)->user)->name ?? '' }}</td>
                 </tr>
                 <tr>
                     <th>日付</th>
-                    <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y年') : '' }}　{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('n月j日') : '' }}</td>
+                    <td>{{ optional($correction->attendance)->clock_in_time ? optional($correction->attendance)->clock_in_time->format('Y年') : '' }}　{{ optional($correction->attendance)->clock_in_time ? optional($correction->attendance)->clock_in_time->format('n月j日') : '' }}</td>
                 </tr>
                 <tr>
                     <th>出勤・退勤</th>
@@ -34,28 +34,33 @@
                     </td>
                 </tr>
                 @php
-                    $breaks = json_decode($correction->requested_breaks, true)['existing'] ?? [];
+                    $breaks = $requestedBreaks['existing'] ?? [];
+                    $newBreaks = $requestedBreaks['new'] ?? [];
                 @endphp
+                @foreach($breaks as $i => $break)
                 <tr>
-                    <th>休憩1</th>
+                    <th>休憩{{ $i+1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
-                            <span>{{ isset($breaks[0]['break_start_time']) ? $breaks[0]['break_start_time'] : '--:--' }}</span>
+                            <span>{{ $break['break_start_time'] ?? '--:--' }}</span>
                             <span class="attendance-detail-time-sep">〜</span>
-                            <span>{{ isset($breaks[0]['break_end_time']) ? $breaks[0]['break_end_time'] : '--:--' }}</span>
+                            <span>{{ $break['break_end_time'] ?? '--:--' }}</span>
                         </div>
                     </td>
                 </tr>
+                @endforeach
+                @foreach($newBreaks as $i => $break)
                 <tr>
-                    <th>休憩2</th>
+                    <th>休憩{{ count($breaks) + $i + 1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
-                            <span>{{ isset($breaks[1]['break_start_time']) ? $breaks[1]['break_start_time'] : '--:--' }}</span>
+                            <span>{{ $break['break_start_time'] ?? '--:--' }}</span>
                             <span class="attendance-detail-time-sep">〜</span>
-                            <span>{{ isset($breaks[1]['break_end_time']) ? $breaks[1]['break_end_time'] : '--:--' }}</span>
+                            <span>{{ $break['break_end_time'] ?? '--:--' }}</span>
                         </div>
                     </td>
                 </tr>
+                @endforeach
                 <tr>
                     <th>備考</th>
                     <td>{{ $correction->remarks }}</td>
@@ -63,7 +68,11 @@
             </table>
             </section>
             <div class="attendance-detail-actions" style="text-align: right; margin-top: 24px;">
-                <button type="button" id="approval-button" class="attendance-detail-submit" data-correction-id="{{ $correction->id }}">承認</button>
+                @if($correction->status === 'pending')
+                    <button type="button" id="approval-button" class="attendance-detail-submit" data-correction-id="{{ $correction->id }}">承認</button>
+                @elseif($correction->status === 'approved')
+                    <button type="button" class="attendance-detail-submit" style="background:#888; color:white; cursor:default;" disabled>承認済み</button>
+                @endif
             </div>
         </form>
     </div>
@@ -96,9 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 // 成功時：ボタンを「承認済み」に変更
                 this.textContent = '承認済み';
-                this.style.backgroundColor = '#28a745';
+                this.style.backgroundColor = '#888';
                 this.style.color = 'white';
                 this.style.cursor = 'default';
+                this.disabled = true;
             } else {
                 // エラー時：ボタンを元に戻す
                 this.disabled = false;

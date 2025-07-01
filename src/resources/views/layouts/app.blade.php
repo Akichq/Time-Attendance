@@ -22,7 +22,7 @@
                 @else
                     <a href="{{ route('attendance.index') }}">勤怠</a>
                     <a href="{{ route('attendance.list') }}">勤怠一覧</a>
-                    <a href="{{ route('correction.list') }}">申請一覧</a>
+                    <a href="{{ route('correction.list') }}">申請</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="header-nav-button">ログアウト</button>

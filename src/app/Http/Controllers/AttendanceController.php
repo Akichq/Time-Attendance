@@ -253,7 +253,47 @@ class AttendanceController extends Controller
             ->first();
         $isPending = !is_null($pendingCorrection);
 
-        return view('attendance.detail', compact('attendance', 'breaks', 'isPending', 'pendingCorrection'));
+        // 承認済みの修正申請があるかどうかを確認
+        $approvedCorrection = AttendanceCorrection::where('attendance_id', $attendance->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+        $isApproved = !is_null($approvedCorrection);
+
+        // 承認待ち状態の場合、修正申請データをフィールドに表示するためのデータを準備
+        if ($isPending && $pendingCorrection) {
+            // 修正申請データをattendanceオブジェクトに一時的に設定
+            $attendance->clock_in_time = $pendingCorrection->requested_clock_in_time;
+            $attendance->clock_out_time = $pendingCorrection->requested_clock_out_time;
+            $attendance->remarks = $pendingCorrection->remarks;
+
+            // 修正申請された休憩データを取得
+            $requestedBreaks = json_decode($pendingCorrection->requested_breaks, true);
+            
+            // 既存の休憩データを修正申請データで更新
+            if (isset($requestedBreaks['existing'])) {
+                foreach ($requestedBreaks['existing'] as $index => $break) {
+                    if (isset($breaks[$index])) {
+                        $breaks[$index]->break_start_time = $break['break_start_time'];
+                        $breaks[$index]->break_end_time = $break['break_end_time'];
+                    }
+                }
+            }
+
+            // 新しい休憩データを追加
+            if (isset($requestedBreaks['new'])) {
+                foreach ($requestedBreaks['new'] as $break) {
+                    if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
+                        $newBreak = new \App\Models\BreakTime();
+                        $newBreak->break_start_time = $break['break_start_time'];
+                        $newBreak->break_end_time = $break['break_end_time'];
+                        $breaks->push($newBreak);
+                    }
+                }
+            }
+        }
+
+        return view('attendance.detail', compact('attendance', 'breaks', 'isPending', 'isApproved', 'pendingCorrection'));
     }
 
     /**
@@ -269,12 +309,19 @@ class AttendanceController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        // 元の勤怠データの日付を取得
+        $originalDate = $attendance->clock_in_time->format('Y-m-d');
+        
+        // 日付＋時刻の形式で申請データを作成
+        $requestedClockInTime = $originalDate . ' ' . $request->clock_in_time . ':00';
+        $requestedClockOutTime = $originalDate . ' ' . $request->clock_out_time . ':00';
+
         // 修正申請データを作成
         $correction = AttendanceCorrection::create([
             'attendance_id' => $attendance->id,
             'user_id' => Auth::id(),
-            'requested_clock_in_time' => $request->clock_in_time,
-            'requested_clock_out_time' => $request->clock_out_time,
+            'requested_clock_in_time' => $requestedClockInTime,
+            'requested_clock_out_time' => $requestedClockOutTime,
             'requested_breaks' => json_encode(['existing' => $request->breaks, 'new' => $request->new_breaks]),
             'remarks' => $request->remarks ?? '',
             'status' => 'pending',

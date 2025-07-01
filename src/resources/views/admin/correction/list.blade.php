@@ -34,7 +34,7 @@
                     <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y/m/d') : '' }}</td>
                     <td>{{ $correction->remarks }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
-                    <td><a href="{{ route('admin.correction.approve', ['attendance_correct_request' => $correction->id]) }}" class="request-detail-link">詳細</a></td>
+                    <td><a href="{{ route('admin.correction.approve', ['correction' => $correction->id]) }}" class="request-detail-link">詳細</a></td>
                 </tr>
                 @empty
                 <tr>
@@ -62,7 +62,7 @@
                     <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y/m/d') : '' }}</td>
                     <td>{{ $correction->remarks }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
-                    <td><a href="{{ route('admin.correction.approve', ['attendance_correct_request' => $correction->id]) }}" class="request-detail-link">詳細</a></td>
+                    <td><a href="{{ route('admin.correction.approve', ['correction' => $correction->id]) }}" class="request-detail-link" style="background:#888; color:white; pointer-events:none; cursor:default; padding:4px 12px; border-radius:4px; text-decoration:none;">承認済み</a></td>
                 </tr>
                 @empty
                 <tr>

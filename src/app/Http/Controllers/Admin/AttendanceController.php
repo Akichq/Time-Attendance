@@ -24,7 +24,7 @@ class AttendanceController extends Controller
         // 指定された日付の勤怠データを取得 (N+1問題対策)
         $attendances = Attendance::with(['user', 'breaks'])
             ->whereDate('clock_in_time', $date)
-            ->paginate(5);
+            ->get();
 
         // 各勤怠データの時間計算
         foreach ($attendances as $attendance) {
@@ -65,8 +65,8 @@ class AttendanceController extends Controller
             $attendance = Attendance::with(['user', 'breaks'])->findOrFail($attendance);
         }
         
-        // 休憩は最大2件まで表示（画像仕様）
-        $breaks = $attendance->breaks->take(2);
+        // 休憩は全件表示
+        $breaks = $attendance->breaks;
         return view('admin.attendance.detail', compact('attendance', 'breaks'));
     }
 
@@ -89,12 +89,14 @@ class AttendanceController extends Controller
             'remarks.required' => '備考を記入してください。',
         ];
         $validated = $request->validate($rules, $messages);
-        // 休憩時間のバリデーション
+        // 勤怠データ更新
         $clockIn = $request->input('clock_in_time');
         $clockOut = $request->input('clock_out_time');
-        foreach ([0,1] as $i) {
-            $bStart = $request->input("breaks.$i.start");
-            $bEnd = $request->input("breaks.$i.end");
+        // 休憩時間のバリデーション（すべての休憩＋追加欄）
+        $breakInputs = $request->input('breaks', []);
+        foreach ($breakInputs as $i => $break) {
+            $bStart = $break['start'] ?? null;
+            $bEnd = $break['end'] ?? null;
             if ($bStart && ($bStart < $clockIn || $bStart > $clockOut)) {
                 return back()->withErrors(["breaks.$i.start" => '休憩時間が勤務時間外です。'])->withInput();
             }
@@ -115,7 +117,17 @@ class AttendanceController extends Controller
                 $attendance->breaks[$i]->save();
             }
         }
-        return redirect()->route('attendance.show', $attendance->id)->with('success', '勤怠情報を修正しました。');
+        // 追加休憩（breaks[n]）が入力されていれば新規作成
+        $newIndex = count($attendance->breaks);
+        $newStart = $request->input("breaks.$newIndex.start");
+        $newEnd = $request->input("breaks.$newIndex.end");
+        if ($newStart && $newEnd) {
+            $attendance->breaks()->create([
+                'break_start_time' => $newStart,
+                'break_end_time' => $newEnd,
+            ]);
+        }
+        return redirect()->route('admin.attendance.show', $attendance->id)->with('success', '勤怠情報を修正しました。');
     }
 
     /**

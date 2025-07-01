@@ -43,10 +43,12 @@
     font-size: 1rem;
     background: #fff;
 }
+
 .attendance-detail-table th, .attendance-detail-table td {
     padding: 24px 8px;
     border-bottom: 1px solid #eee;
 }
+
 .attendance-detail-table th {
     background: #fff;
     font-weight: 600;
@@ -54,19 +56,23 @@
     text-align: left;
     width: 30%;
 }
+
 .attendance-detail-table td {
     font-weight: 600;
     color: #212529;
 }
+
 .attendance-detail-table tr:last-child th,
 .attendance-detail-table tr:last-child td {
     border-bottom: none;
 }
+
 .attendance-detail-time-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .attendance-detail-time-row input[type="time"] {
     width: 110px;
     padding: 6px 8px;
@@ -77,11 +83,13 @@
     font-weight: bold;
     color: #222;
 }
+
 .attendance-detail-time-sep {
     margin: 0 8px;
     color: #888;
     font-weight: bold;
 }
+
 .attendance-detail-remarks {
     width: 100%;
     min-height: 40px;
@@ -94,15 +102,18 @@
     color: #222;
     resize: vertical;
 }
+
 .attendance-detail-error {
     color: #d32f2f;
     font-size: 0.95rem;
     margin-top: 4px;
 }
+
 .attendance-detail-actions {
     text-align: right;
     margin-top: 24px;
 }
+
 .attendance-detail-submit {
     background: #111;
     color: #fff;
@@ -114,6 +125,7 @@
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .attendance-detail-submit:hover {
     background: #333;
 }
@@ -125,25 +137,71 @@
     font-weight: bold;
 }
 
+.attendance-error-message {
+    color: #e3342f;
+    font-size: 0.875em;
+    font-weight: bold;
+    margin-top: 5px;
+    display: block;
+}
+
+.attendance-success-message {
+    color: #2e7d32;
+    font-size: 0.95rem;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #e8f5e8;
+    border: 1px solid #4caf50;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.attendance-form-actions {
+    width: 107%;
+    text-align: right;
+    margin-top: 24px;
+}
+
+.attendance-submit-button {
+    background: #111;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 36px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.attendance-submit-button:hover {
+    opacity: 0.8;
+}
+
 @media (max-width: 768px) {
     .attendance-detail-main {
         max-width: 100%;
         padding: 0 4vw 24px 4vw;
     }
+    
     .attendance-detail-card {
         padding: 16px 2vw 16px 2vw;
     }
+    
     .attendance-detail-table th {
         width: 80px;
     }
+    
     .attendance-detail-table th, .attendance-detail-table td {
         padding: 12px 4px;
     }
+    
     .attendance-detail-time-row input[type="time"] {
         width: 90px;
         font-size: 0.95rem;
     }
-    .attendance-detail-submit {
+    
+    .attendance-submit-button {
         width: 100%;
         padding: 10px 0;
     }

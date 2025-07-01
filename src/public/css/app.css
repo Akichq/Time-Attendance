@@ -46,7 +46,6 @@ body {
     cursor: pointer;
     transition: opacity 0.2s;
 }
-
 main {
     min-height: 80vh;
 }

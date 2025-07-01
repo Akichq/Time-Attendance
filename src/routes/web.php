@@ -53,7 +53,40 @@ Route::middleware('auth')->group(function () {
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
 
-// 勤怠管理
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    // ログイン・ログアウトはミドルウェア外
+    Route::get('/login', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'create'])
+        ->middleware('guest:admin')
+        ->name('login');
+    Route::post('/login', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'store'])
+        ->middleware('guest:admin');
+    Route::post('/logout', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'destroy'])
+        ->middleware('auth:admin')
+        ->name('logout');
+
+    // 管理者用ページはauth:adminでグループ化
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('/attendance/list', [\App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendance.list');
+        Route::get('/attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'show'])->name('attendance.show');
+        Route::get('/attendance/staff/{id}', [\App\Http\Controllers\Admin\AttendanceController::class, 'staffAttendance'])->name('attendance.staff');
+        Route::get('/attendance/staff/{id}/csv', [\App\Http\Controllers\Admin\AttendanceController::class, 'staffAttendanceCsv'])->name('attendance.staff.csv');
+
+        Route::patch('/attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'update'])->name('attendance.update');
+        Route::get('/correction/list', [\App\Http\Controllers\AttendanceCorrectionController::class, 'adminList'])->name('correction.list');
+        Route::get('/stamp_correction_request/approve/{correction}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'show'])->name('admin.correction.approve');
+        Route::patch('/stamp_correction_request/approve/{correction}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'approve'])->name('correction.approve');
+        Route::patch('/correction/{correction}/reject', [\App\Http\Controllers\AttendanceCorrectionController::class, 'reject'])->name('correction.reject');
+        Route::get('/staff/list', [\App\Http\Controllers\Admin\StaffController::class, 'index'])->name('staff.list');
+    });
+});
+
+// 勤怠管理（一般ユーザー用）
 Route::middleware(['auth', 'verified'])->group(function () {
     // 勤怠打刻画面
     Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index'])
@@ -109,95 +142,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('correction.list');
 
     // 修正申請承認画面（管理者・一般ユーザー共通）
-    Route::get('/stamp_correction_request/approve/{attendance_correct_request}', function($correctionId) {
+    Route::get('/stamp_correction_request/approve/{correction}', function($correction) {
         if (auth('admin')->check()) {
-            // 管理者の場合
-            $correction = \App\Models\AttendanceCorrection::findOrFail($correctionId);
             return app(\App\Http\Controllers\AttendanceCorrectionController::class)->show($correction);
-        } elseif (auth()->check()) {
-            // 一般ユーザーの場合（承認機能は通常不要なのでエラー表示やリダイレクト）
-            abort(403, '権限がありません');
-        } else {
-            // 未認証の場合はログイン画面へ
-            return redirect('/login');
         }
-    })->name('correction.show');
-
-    Route::patch('/stamp_correction_request/approve/{attendance_correct_request}', function($correctionId) {
-        if (auth('admin')->check()) {
-            // 管理者の場合
-            $correction = \App\Models\AttendanceCorrection::findOrFail($correctionId);
-            return app(\App\Http\Controllers\AttendanceCorrectionController::class)->approve(request(), $correction);
-        } elseif (auth()->check()) {
-            // 一般ユーザーの場合（承認機能は通常不要なのでエラー表示やリダイレクト）
-            abort(403, '権限がありません');
-        } else {
-            // 未認証の場合はログイン画面へ
-            return redirect('/login');
+        if (auth()->check()) {
+            // 一般ユーザー用のshowメソッドが必要な場合はこちらに実装
+            // 例: return app(\App\Http\Controllers\AttendanceCorrectionController::class)->userShow($correction);
+            abort(403, '一般ユーザー用の詳細画面は未実装です');
         }
+        return redirect('/login');
     })->name('correction.approve');
+
+    // ログイン後のリダイレクト先を勤怠打刻画面に変更
+    Route::get('/dashboard', function () {
+        return redirect()->route('attendance.index');
+    })->middleware(['auth'])->name('dashboard');
 });
 
-// 勤怠詳細画面（一般ユーザー・管理者共通）- ミドルウェアグループの外に移動
+// 共通の勤怠詳細ルート（機能要件通り同じURLパス）
 Route::get('/attendance/{attendance}', function($attendance) {
-    // ルートパラメータをAttendanceモデルインスタンスに変換
+    // Attendanceモデルを取得
     $attendanceModel = \App\Models\Attendance::findOrFail($attendance);
     
-    // 一般ユーザー認証が有効な場合は必ず一般ユーザー用を優先
-    if (auth()->check()) {
-        return app(\App\Http\Controllers\AttendanceController::class)->show($attendanceModel);
-    } elseif (auth('admin')->check()) {
-        // 一般ユーザーで未ログインかつ管理者認証が有効な場合のみ管理者用
+    // 管理者認証を先にチェック
+    if (auth('admin')->check()) {
+        // 管理者の場合
         return app(\App\Http\Controllers\Admin\AttendanceController::class)->show($attendanceModel);
     }
+    
+    // 一般ユーザー認証をチェック
+    if (auth()->check()) {
+        // 一般ユーザーの場合
+        return app(\App\Http\Controllers\AttendanceController::class)->show($attendanceModel);
+    }
+    
     // 未認証の場合はログイン画面へ
     return redirect('/login');
 })->name('attendance.show');
-
-// ログイン後のリダイレクト先を勤怠打刻画面に変更
-Route::get('/dashboard', function () {
-    return redirect()->route('attendance.index');
-})->middleware(['auth'])->name('dashboard');
-
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'create'])
-        ->middleware('guest:admin')
-        ->name('login');
-
-    Route::post('/login', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'store'])
-        ->middleware('guest:admin');
-
-    Route::post('/logout', [\App\Http\Controllers\Admin\Auth\AuthenticatedSessionController::class, 'destroy'])
-        ->middleware('auth:admin')
-        ->name('logout');
-
-    // この下に、認証が必要な他の管理者用ルートを追加していく
-    Route::middleware('auth:admin')->group(function () {
-        // 勤怠一覧画面（管理者）
-        Route::get('/attendance/list', [\App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendance.list');
-
-        // スタッフ別勤怠一覧（共通ルートより前に定義）
-        Route::get('/attendance/staff/{id}', [\App\Http\Controllers\Admin\AttendanceController::class, 'staffAttendance'])->name('attendance.staff');
-
-        // スタッフ別勤怠一覧CSV出力（共通ルートより前に定義）
-        Route::get('/attendance/staff/{id}/csv', [\App\Http\Controllers\Admin\AttendanceController::class, 'staffAttendanceCsv'])->name('attendance.staff.csv');
-
-        // 勤怠詳細画面（管理者） - 共通ルートで処理されるため削除
-        Route::patch('/attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'update'])->name('attendance.update');
-
-        // 申請承認機能
-        Route::get('/correction/list', [\App\Http\Controllers\AttendanceCorrectionController::class, 'adminList'])->name('correction.list');
-        Route::get('/stamp_correction_request/approve/{attendance_correct_request}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'show'])->name('correction.approve');
-        Route::patch('/stamp_correction_request/approve/{attendance_correct_request}', [\App\Http\Controllers\AttendanceCorrectionController::class, 'approve'])->name('correction.approve');
-        Route::patch('/correction/{correction}/reject', [\App\Http\Controllers\AttendanceCorrectionController::class, 'reject'])->name('correction.reject');
-
-        // スタッフ一覧（本実装）
-        Route::get('/staff/list', [\App\Http\Controllers\Admin\StaffController::class, 'index'])->name('staff.list');
-    });
-});

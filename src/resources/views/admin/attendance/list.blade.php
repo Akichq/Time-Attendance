@@ -55,8 +55,5 @@
             </tbody>
         </table>
     </section>
-    <div class="attendance-pagination">
-        {{ $attendances->links() }}
-    </div>
 </main>
 @endsection 

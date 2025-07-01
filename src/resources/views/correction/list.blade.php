@@ -19,6 +19,7 @@
             <thead>
                 <tr>
                     <th>状態</th>
+                    <th>名前</th>
                     <th>対象日付</th>
                     <th>申請理由</th>
                     <th>申請日付</th>
@@ -29,6 +30,7 @@
                 @forelse ($pending as $correction)
                 <tr>
                     <td>承認待ち</td>
+                    <td>{{ $correction->attendance->user->name }}</td>
                     <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y/m/d') : '' }}</td>
                     <td>{{ $correction->remarks }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
@@ -36,7 +38,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="request-list-empty">承認待ちの申請はありません</td>
+                    <td colspan="6" class="request-list-empty">承認待ちの申請はありません</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -45,6 +47,7 @@
             <thead>
                 <tr>
                     <th>状態</th>
+                    <th>名前</th>
                     <th>対象日付</th>
                     <th>申請理由</th>
                     <th>申請日付</th>
@@ -55,6 +58,7 @@
                 @forelse ($approved as $correction)
                 <tr>
                     <td>承認済み</td>
+                    <td>{{ $correction->attendance->user->name }}</td>
                     <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y/m/d') : '' }}</td>
                     <td>{{ $correction->remarks }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
@@ -62,7 +66,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="request-list-empty">承認済みの申請はありません</td>
+                    <td colspan="6" class="request-list-empty">承認済みの申請はありません</td>
                 </tr>
                 @endforelse
             </tbody>
