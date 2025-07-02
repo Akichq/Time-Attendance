@@ -22,5 +22,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => bcrypt('password'), // 'password' をハッシュ化
         ]);
+
+        // テスト用ダミーデータを作成（開発環境のみ）
+        if (app()->environment('local', 'development')) {
+            $this->call(TestDataSeeder::class);
+        }
     }
 }
