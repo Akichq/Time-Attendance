@@ -82,7 +82,7 @@ class UpdateAttendanceRequest extends FormRequest
             // 新しい休憩時間のチェック
             if ($this->input('new_breaks')) {
                 foreach ($this->input('new_breaks') as $index => $break) {
-                     if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
+                        if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
                         // 休憩開始時間が勤務開始時間より前、または休憩終了時間が勤務終了時間より後の場合
                         if ($break['break_start_time'] < $clockInTime || $break['break_end_time'] > $clockOutTime) {
                             $validator->errors()->add("new_breaks.{$index}.break_start_time", '休憩時間が勤務時間外です');
