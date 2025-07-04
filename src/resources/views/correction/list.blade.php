@@ -43,7 +43,7 @@
                 @endforelse
             </tbody>
         </table>
-        <table class="request-list-table" id="approved-table" style="display:none;">
+        <table class="request-list-table table-hidden" id="approved-table">
             <thead>
                 <tr>
                     <th>状態</th>

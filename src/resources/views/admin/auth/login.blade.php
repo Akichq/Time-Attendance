@@ -10,7 +10,6 @@
 <div class="container">
     <h1>管理者ログイン</h1>
 
-    <!-- Session Status -->
     @if (session('status'))
         <div class="mb-4 font-medium text-sm text-green-600">
             {{ session('status') }}
@@ -20,7 +19,6 @@
     <form method="POST" action="{{ route('admin.login') }}" novalidate>
         @csrf
 
-        <!-- Email Address -->
         <div class="form-group">
             <label for="email">メールアドレス</label>
             <input id="email" type="email" name="email" value="{{ old('email') }}" autofocus>
@@ -29,7 +27,6 @@
             @enderror
         </div>
 
-        <!-- Password -->
         <div class="form-group">
             <label for="password">パスワード</label>
             <input id="password" type="password" name="password">
@@ -45,4 +42,4 @@
         </div>
     </form>
 </div>
-@endsection 
+@endsection

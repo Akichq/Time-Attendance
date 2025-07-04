@@ -22,7 +22,6 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        // バリデーションはFormRequestで自動実行される
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -42,4 +41,4 @@ class LoginController extends Controller
 
         return redirect('/login');
     }
-} 
+}

@@ -43,7 +43,7 @@
                 @endforelse
             </tbody>
         </table>
-        <table class="request-list-table" id="approved-table" style="display:none;">
+        <table class="request-list-table table-hidden" id="approved-table">
             <thead>
                 <tr>
                     <th>状態</th>
@@ -62,7 +62,7 @@
                     <td>{{ $correction->attendance->clock_in_time ? $correction->attendance->clock_in_time->format('Y/m/d') : '' }}</td>
                     <td>{{ $correction->remarks }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
-                    <td><a href="{{ route('admin.correction.approve', ['correction' => $correction->id]) }}" class="request-detail-link" style="background:#888; color:white; pointer-events:none; cursor:default; padding:4px 12px; border-radius:4px; text-decoration:none;">承認済み</a></td>
+                    <td><a href="{{ route('admin.correction.approve', ['correction' => $correction->id]) }}" class="request-detail-link request-detail-link-approved">承認済み</a></td>
                 </tr>
                 @empty
                 <tr>

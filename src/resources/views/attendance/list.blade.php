@@ -14,7 +14,7 @@
         <nav class="month-navigation">
             <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="month-navigation__link--previous">&#8592; 前月</a>
             <span class="month-navigation__current-month">
-                <svg class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg class="calendar-icon calendar-icon-inline" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 <span class="month-navigation__current-month-text">{{ $targetMonth->format('Y/m') }}</span>
             </span>
             <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="month-navigation__link--next">翌月 &#8594;</a>

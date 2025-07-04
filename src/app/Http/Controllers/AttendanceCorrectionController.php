@@ -16,7 +16,6 @@ class AttendanceCorrectionController extends Controller
     public function list(Request $request)
     {
         $user = Auth::user();
-        
         // 承認待ちの申請
         $pending = AttendanceCorrection::with('attendance.user')
             ->where('user_id', $user->id)
@@ -77,14 +76,11 @@ class AttendanceCorrectionController extends Controller
 
         // 勤怠データを更新（元の日付を保持し、時刻のみ更新）
         $attendance = $correction->attendance;
-        
         // 元の勤怠データの日付を取得
         $originalDate = $attendance->clock_in_time->format('Y-m-d');
-        
         // 申請された時刻のみを取得（H:i:s形式）
         $requestedClockInTime = \Carbon\Carbon::parse($correction->requested_clock_in_time)->format('H:i:s');
         $requestedClockOutTime = \Carbon\Carbon::parse($correction->requested_clock_out_time)->format('H:i:s');
-        
         // 元の日付＋申請された時刻で更新
         $attendance->update([
             'clock_in_time' => $originalDate . ' ' . $requestedClockInTime,
@@ -94,7 +90,6 @@ class AttendanceCorrectionController extends Controller
 
         // 休憩時間の更新
         $requestedBreaks = json_decode($correction->requested_breaks, true);
-        
         // 既存の休憩時間を更新
         if (isset($requestedBreaks['existing'])) {
             foreach ($requestedBreaks['existing'] as $index => $break) {
@@ -134,4 +129,4 @@ class AttendanceCorrectionController extends Controller
 
         return redirect()->route('admin.correction.list')->with('success', '申請を却下しました。');
     }
-} 
+}

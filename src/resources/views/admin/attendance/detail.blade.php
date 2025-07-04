@@ -49,7 +49,6 @@
                     </td>
                 </tr>
                 @endforeach
-                <!-- 追加用の空休憩フィールド -->
                 <tr>
                     <th>休憩{{ count($breaks)+1 }}</th>
                     <td>
@@ -73,9 +72,9 @@
                 <button type="submit" class="attendance-submit-button">修正</button>
             </div>
             @if(session('success'))
-                <div style="color: #888; margin-top: 8px; text-align: center;">{{ session('success') }}</div>
+                <div class="attendance-success-message-inline">{{ session('success') }}</div>
             @endif
         </form>
     </div>
 </main>
-@endsection 
+@endsection

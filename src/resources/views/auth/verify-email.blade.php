@@ -9,11 +9,9 @@
 <div class="verify-container">
     <p class="verify-message-main">登録していただいたメールアドレスに認証メールを送付しました。</p>
     <p class="verify-message-main">メール認証を完了してください。</p>
-    <form method="GET" action="/email/verify">
-        <button type="submit" class="verify-btn">認証はこちらから</button>
-    </form>
+    <a href="/email/verify/process" class="verify-btn">認証はこちらから</a>
     <div class="verify-link">
-        <form method="POST" action="{{ route('verification.send') }}" style="display:inline;">
+        <form method="POST" action="{{ route('verification.send') }}" class="verify-link-inline">
             @csrf
             <button type="submit" class="resend-link">認証メールを再送する</button>
         </form>

@@ -41,6 +41,8 @@ body {
     margin-bottom: 24px;
     letter-spacing: 0.05em;
     transition: background 0.2s;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .verify-btn:hover {
@@ -78,4 +80,9 @@ body {
     font-size: 0.95em;
     margin-top: 4px;
     text-align: center;
-} 
+}
+
+/* インラインスタイル用のクラス */
+.verify-link-inline {
+    display: inline;
+}

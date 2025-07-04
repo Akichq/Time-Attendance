@@ -23,26 +23,21 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        // バリデーションはFormRequestで自動実行される
-
         // ユーザー作成
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
         // ログイン
         Auth::login($user);
-
-        // ★ここで認証メール送信
+        // ここで認証メール送信
         $user->sendEmailVerificationNotification();
-
-        // メール認証が必要な場合はメール認証画面へ、そうでなければ勤怠打刻画面へ
+        
         if ($user->hasVerifiedEmail()) {
             return redirect()->route('attendance.index');
         } else {
             return redirect()->route('verification.notice');
         }
     }
-} 
+}

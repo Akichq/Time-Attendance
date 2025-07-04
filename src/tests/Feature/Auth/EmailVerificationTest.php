@@ -71,22 +71,21 @@ class EmailVerificationTest extends TestCase
 
         // 1. メール認証導線画面を表示する
         $response = $this->get('/email/verify');
-        $response->assertStatus(200);
+        $response->assertStatus(200); // 正常に表示
 
         // 「認証はこちらから」ボタンが存在することを確認
         $response->assertSee('認証はこちらから');
         $response->assertSee('verify-btn');
 
-        // 2. 「認証はこちらから」ボタンを押下（GETリクエストでフォーム送信）
-        // 実際の実装では同じページが表示されるが、要件では「メール認証サイトに遷移する」とある
-        $buttonResponse = $this->get('/email/verify');
-        
-        // 3. メール認証サイトを表示する（現在の実装では同じページ）
-        $buttonResponse->assertStatus(200);
-        $buttonResponse->assertSee('認証はこちらから');
-        
-        // 注意: 現在の実装では「認証はこちらから」ボタンは同じページを再表示するだけ
-        // 実際のメール認証は /email/verify/{id}/{hash} で行われる
+        // 2. 「認証はこちらから」ボタンを押下すると実際のメール認証URLに遷移する
+        $buttonResponse = $this->get('/email/verify/process');
+        $buttonResponse->assertStatus(302); // リダイレクト
+
+        // 3. 実際のメール認証URLにリダイレクトされることを確認
+        $buttonResponse->assertRedirect();
+        $redirectUrl = $buttonResponse->headers->get('Location');
+        $this->assertStringContainsString('/email/verify/', $redirectUrl);
+        $this->assertStringContainsString($user->id, $redirectUrl);
     }
 
     /**

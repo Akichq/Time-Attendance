@@ -31,18 +31,17 @@ class AttendanceController extends Controller
             $startTime = new Carbon($attendance->clock_in_time);
             $endTime = $attendance->clock_out_time ? new Carbon($attendance->clock_out_time) : null;
 
-            // 休憩時間の合計（秒）
+            // 休憩時間の合計
             $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
                 return Carbon::parse($break->break_start_time)->diffInSeconds(Carbon::parse($break->break_end_time));
             });
 
-            // 勤務時間（秒）
+            // 勤務時間
             $workSeconds = $endTime ? $startTime->diffInSeconds($endTime) - $totalBreakSeconds : 0;
 
-            // 合計時間（出勤〜退勤＋休憩）（秒）
+            // 合計時間（出勤〜退勤＋休憩）
             $totalSeconds = $endTime ? $startTime->diffInSeconds($endTime) + $totalBreakSeconds : 0;
 
-            // ビューで使いやすいようにフォーマットして格納
             $attendance->total_break_time_formatted = gmdate('H:i', $totalBreakSeconds);
             $attendance->total_work_time_formatted = $endTime ? gmdate('H:i', $workSeconds) : '00:00';
             $attendance->total_time_formatted = $endTime ? gmdate('H:i', $totalSeconds) : '00:00';
@@ -57,15 +56,11 @@ class AttendanceController extends Controller
 
     public function show($attendance)
     {
-        // $attendanceが既にAttendanceモデルインスタンスの場合
         if ($attendance instanceof \App\Models\Attendance) {
             $attendance->load(['user', 'breaks']);
         } else {
-            // $attendanceがIDの場合（従来の動作）
             $attendance = Attendance::with(['user', 'breaks'])->findOrFail($attendance);
         }
-        
-        // 休憩は全件表示
         $breaks = $attendance->breaks;
         return view('admin.attendance.detail', compact('attendance', 'breaks'));
     }
@@ -109,7 +104,7 @@ class AttendanceController extends Controller
         $attendance->clock_out_time = $clockOut;
         $attendance->remarks = $request->input('remarks');
         $attendance->save();
-        // 休憩データ更新（最大2件）
+        // 休憩データ更新
         foreach ([0,1] as $i) {
             if (isset($attendance->breaks[$i])) {
                 $attendance->breaks[$i]->break_start_time = $request->input("breaks.$i.start");
@@ -117,7 +112,6 @@ class AttendanceController extends Controller
                 $attendance->breaks[$i]->save();
             }
         }
-        // 追加休憩（breaks[n]）が入力されていれば新規作成
         $newIndex = count($attendance->breaks);
         $newStart = $request->input("breaks.$newIndex.start");
         $newEnd = $request->input("breaks.$newIndex.end");

@@ -48,7 +48,7 @@
 .request-list-table-section {
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     padding: 0 0 24px 0;
 }
 
@@ -59,7 +59,8 @@
     font-size: 1rem;
     background: #fff;
 }
-.request-list-table th, .request-list-table td {
+.request-list-table th,
+.request-list-table td {
     padding: 16px 8px;
     border-bottom: 1px solid #eee;
 }
@@ -88,6 +89,21 @@
     font-size: 1.05rem;
 }
 
+/* インラインスタイル用のクラス */
+.table-hidden {
+    display: none;
+}
+
+.request-detail-link-approved {
+    background: #888;
+    color: white;
+    pointer-events: none;
+    cursor: default;
+    padding: 4px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
     .request-list-container {
         max-width: 100%;
@@ -101,8 +117,9 @@
     .request-list-tabs {
         gap: 16px;
     }
-    .request-list-table th, .request-list-table td {
+    .request-list-table th,
+    .request-list-table td {
         padding: 10px 4px;
         font-size: 0.95rem;
     }
-} 
+}

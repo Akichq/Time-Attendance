@@ -35,4 +35,4 @@
         @yield('content')
     </main>
 </body>
-</html> 
+</html>

@@ -49,7 +49,6 @@
                     </tr>
                     @endif
                 @endforeach
-                <!-- 追加用の空休憩フィールド -->
                 <tr>
                     <th>休憩{{ count($breaks)+1 }}</th>
                     <td>
@@ -73,11 +72,11 @@
             </section>
             <div class="attendance-form-actions">
                 @if($isPending)
-                    <span class="attendance-pending-message" style="margin: 0; padding: 0; background: none; border: none; font-size: 1rem; color: #dc3545;">
+                    <span class="attendance-pending-message attendance-pending-message-inline">
                         承認待ちのため修正はできません。
                     </span>
                 @elseif($isApproved)
-                    <button type="button" class="attendance-submit-button" style="background-color: #888; cursor: not-allowed;" disabled>承認済み</button>
+                    <button type="button" class="attendance-submit-button attendance-submit-button-disabled" disabled>承認済み</button>
                 @else
                     <button type="submit" class="attendance-submit-button">修正</button>
                 @endif
@@ -88,4 +87,4 @@
         </form>
     </div>
 </main>
-@endsection 
+@endsection

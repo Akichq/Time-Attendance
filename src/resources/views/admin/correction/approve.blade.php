@@ -67,11 +67,11 @@
                 </tr>
             </table>
             </section>
-            <div class="attendance-detail-actions" style="text-align: right; margin-top: 24px;">
+            <div class="attendance-detail-actions attendance-detail-actions-right">
                 @if($correction->status === 'pending')
                     <button type="button" id="approval-button" class="attendance-detail-submit" data-correction-id="{{ $correction->id }}">承認</button>
                 @elseif($correction->status === 'approved')
-                    <button type="button" class="attendance-detail-submit" style="background:#888; color:white; cursor:default;" disabled>承認済み</button>
+                    <button type="button" class="attendance-detail-submit attendance-detail-submit-approved" disabled>承認済み</button>
                 @endif
             </div>
         </form>
@@ -82,16 +82,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const approvalButton = document.getElementById('approval-button');
     const form = document.getElementById('approval-form');
-    
+
     approvalButton.addEventListener('click', function() {
         const correctionId = this.getAttribute('data-correction-id');
         const token = document.querySelector('input[name="_token"]').value;
-        
-        // ボタンを無効化
+
         this.disabled = true;
         this.textContent = '処理中...';
-        
-        // 非同期で承認処理を実行
+
         fetch(`/admin/stamp_correction_request/approve/${correctionId}`, {
             method: 'PATCH',
             headers: {
@@ -103,21 +101,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // 成功時：ボタンを「承認済み」に変更
                 this.textContent = '承認済み';
                 this.style.backgroundColor = '#888';
                 this.style.color = 'white';
                 this.style.cursor = 'default';
                 this.disabled = true;
             } else {
-                // エラー時：ボタンを元に戻す
                 this.disabled = false;
                 this.textContent = '承認';
                 alert('承認処理中にエラーが発生しました。');
             }
         })
         .catch(error => {
-            // エラー時：ボタンを元に戻す
             this.disabled = false;
             this.textContent = '承認';
             alert('承認処理中にエラーが発生しました。');
@@ -126,4 +121,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endsection 
+@endsection

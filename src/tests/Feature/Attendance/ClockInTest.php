@@ -95,7 +95,7 @@ class ClockInTest extends TestCase
         
         // 出勤ボタンのフォームが非表示になっていることを確認
         $response->assertSee('出勤');
-        $response->assertSee('display:none');
+        $response->assertSee('form-hidden');
 
         // 出勤処理を試行してもエラーになることを確認
         $response = $this->post('/attendance/clock-in');

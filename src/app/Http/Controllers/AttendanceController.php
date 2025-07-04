@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use Carbon\Carbon;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Models\AttendanceCorrection;
-use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
     /**
-     * 勤怠打刻画面を表示します。
+     *
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -30,19 +28,17 @@ class AttendanceController extends Controller
             ->latest('clock_in_time')
             ->first();
 
-        $attendanceStatus = 'before_work'; // デフォルトは出勤前
+        $attendanceStatus = 'before_work';
 
         if ($latestAttendance) {
             if (!$latestAttendance->clock_out_time) {
-                // 出勤中
                 $latestBreak = $latestAttendance->breaks()->latest('break_start_time')->first();
                 if ($latestBreak && !$latestBreak->break_end_time) {
-                    $attendanceStatus = 'on_break'; // 休憩中
+                    $attendanceStatus = 'on_break';
                 } else {
-                    $attendanceStatus = 'at_work'; // 勤務中
+                    $attendanceStatus = 'at_work';
                 }
             } else {
-                // 退勤後
                 $attendanceStatus = 'after_work';
             }
         }
@@ -51,7 +47,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * 出勤を記録します。
+     *
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -94,7 +90,6 @@ class AttendanceController extends Controller
         if (!$attendance) {
             return redirect()->back()->with('error', '出勤記録が見つかりません。');
         }
-        
         // 休憩中であれば退勤できないようにする
         $latestBreak = $attendance->breaks()->latest('break_start_time')->first();
         if ($latestBreak && !$latestBreak->break_end_time) {
@@ -126,7 +121,6 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', '出勤記録が見つかりません。');
         }
 
-        // 既に休憩中の場合は何もしない
         $existingBreak = $attendance->breaks()->whereNull('break_end_time')->first();
         if ($existingBreak) {
             return redirect()->back()->with('error', '既に休憩中です。');
@@ -264,18 +258,18 @@ class AttendanceController extends Controller
         if ($isPending && $pendingCorrection) {
             // 元の勤怠データの日付を保持
             $originalDate = $attendance->clock_in_time->format('Y-m-d');
-            
+
             // 修正申請データの時刻部分のみを取得して、元の日付と組み合わせる
             $requestedClockInTime = Carbon::parse($pendingCorrection->requested_clock_in_time);
             $requestedClockOutTime = Carbon::parse($pendingCorrection->requested_clock_out_time);
-            
+
             $attendance->clock_in_time = $originalDate . ' ' . $requestedClockInTime->format('H:i:s');
             $attendance->clock_out_time = $originalDate . ' ' . $requestedClockOutTime->format('H:i:s');
             $attendance->remarks = $pendingCorrection->remarks;
 
             // 修正申請された休憩データを取得
             $requestedBreaks = json_decode($pendingCorrection->requested_breaks, true);
-            
+
             // 既存の休憩データを修正申請データで更新
             if (isset($requestedBreaks['existing'])) {
                 foreach ($requestedBreaks['existing'] as $index => $break) {
@@ -317,7 +311,7 @@ class AttendanceController extends Controller
 
         // 元の勤怠データの日付を取得
         $originalDate = $attendance->clock_in_time->format('Y-m-d');
-        
+
         // 日付＋時刻の形式で申請データを作成
         $requestedClockInTime = $originalDate . ' ' . $request->clock_in_time . ':00';
         $requestedClockOutTime = $originalDate . ' ' . $request->clock_out_time . ':00';
@@ -336,4 +330,4 @@ class AttendanceController extends Controller
         // 詳細画面にリダイレクト
         return redirect()->route('attendance.show', ['attendance' => $attendance->id]);
     }
-} 
+}

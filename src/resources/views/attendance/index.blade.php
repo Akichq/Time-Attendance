@@ -32,28 +32,28 @@
     </div>
 
     <div class="attendance-buttons">
-        <form action="{{ route('attendance.clock-in') }}" method="POST" style="{{ $attendanceStatus === 'before_work' ? '' : 'display:none;' }}">
+        <form action="{{ route('attendance.clock-in') }}" method="POST" class="{{ $attendanceStatus === 'before_work' ? '' : 'form-hidden' }}">
             @csrf
             <button type="submit" class="attendance-btn clock-in">出勤</button>
         </form>
 
-        <form action="{{ route('attendance.clock-out') }}" method="POST" style="{{ $attendanceStatus === 'at_work' ? '' : 'display:none;' }}">
+        <form action="{{ route('attendance.clock-out') }}" method="POST" class="{{ $attendanceStatus === 'at_work' ? '' : 'form-hidden' }}">
             @csrf
             <button type="submit" class="attendance-btn clock-out">退勤</button>
         </form>
 
-        <form action="{{ route('attendance.break-start') }}" method="POST" style="{{ $attendanceStatus === 'at_work' ? '' : 'display:none;' }}">
+        <form action="{{ route('attendance.break-start') }}" method="POST" class="{{ $attendanceStatus === 'at_work' ? '' : 'form-hidden' }}">
             @csrf
             <button type="submit" class="attendance-btn break-start">休憩入</button>
         </form>
 
-        <form action="{{ route('attendance.break-end') }}" method="POST" style="{{ $attendanceStatus === 'on_break' ? '' : 'display:none;' }}">
+        <form action="{{ route('attendance.break-end') }}" method="POST" class="{{ $attendanceStatus === 'on_break' ? '' : 'form-hidden' }}">
             @csrf
             <button type="submit" class="attendance-btn break-end">休憩戻</button>
         </form>
     </div>
 
-    <div class="completion-message" style="{{ $attendanceStatus === 'after_work' ? '' : 'display:none;' }}">
+    <div class="completion-message {{ $attendanceStatus === 'after_work' ? '' : 'completion-message-hidden' }}">
         お疲れ様でした。
     </div>
 </div>

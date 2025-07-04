@@ -16,7 +16,7 @@
     width: 100%;
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     margin-bottom: 24px;
     padding: 12px 0;
 }
@@ -87,7 +87,7 @@
 .attendance-list-container {
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     padding: 0 0 24px 0;
 }
 
@@ -98,7 +98,8 @@
     background: #fff;
 }
 
-.attendance-table th, .attendance-table td {
+.attendance-table th,
+.attendance-table td {
     padding: 16px 12px;
     text-align: center;
     background: #fff;
@@ -164,25 +165,31 @@
     width: 10%;
 }
 
+/* インラインスタイル用のクラス */
+.calendar-icon-inline {
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 1400px) {
     .list-main {
         width: 99%;
         margin: 8px auto;
     }
-    
+
     .attendance-list-container {
         padding: 10px;
     }
-    
+
     .attendance-table {
         font-size: 0.75rem;
     }
-    
+
     .attendance-table__header th {
         padding: 6px 3px;
     }
-    
+
     .attendance-table__body td {
         padding: 4px 2px;
     }
