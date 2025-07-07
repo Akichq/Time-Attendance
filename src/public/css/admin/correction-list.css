@@ -89,11 +89,6 @@
     font-size: 1.05rem;
 }
 
-/* インラインスタイル用のクラス */
-.table-hidden {
-    display: none;
-}
-
 .request-detail-link-approved {
     background: #888;
     color: white;

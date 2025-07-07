@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         Admin::create([
             'name' => 'テスト管理者',
             'email' => 'admin@example.com',
-            'password' => bcrypt('password'), // 'password' をハッシュ化
+            'password' => bcrypt('password'),
         ]);
 
         // テスト用ダミーデータを作成（開発環境のみ）

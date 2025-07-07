@@ -87,21 +87,10 @@ class AttendanceController extends Controller
         // 勤怠データ更新
         $clockIn = $request->input('clock_in_time');
         $clockOut = $request->input('clock_out_time');
-        // 休憩時間のバリデーション（すべての休憩＋追加欄）
-        $breakInputs = $request->input('breaks', []);
-        foreach ($breakInputs as $i => $break) {
-            $bStart = $break['start'] ?? null;
-            $bEnd = $break['end'] ?? null;
-            if ($bStart && ($bStart < $clockIn || $bStart > $clockOut)) {
-                return back()->withErrors(["breaks.$i.start" => '休憩時間が勤務時間外です。'])->withInput();
-            }
-            if ($bEnd && ($bEnd < $clockIn || $bEnd > $clockOut)) {
-                return back()->withErrors(["breaks.$i.end" => '休憩時間が勤務時間外です。'])->withInput();
-            }
-        }
-        // 勤怠データ更新
-        $attendance->clock_in_time = $clockIn;
-        $attendance->clock_out_time = $clockOut;
+        // 日付部分は元のまま、時刻のみを更新
+        $originalDate = $attendance->clock_in_time ? (new \Carbon\Carbon($attendance->clock_in_time))->format('Y-m-d') : now()->format('Y-m-d');
+        $attendance->clock_in_time = $originalDate . ' ' . $clockIn . ':00';
+        $attendance->clock_out_time = $originalDate . ' ' . $clockOut . ':00';
         $attendance->remarks = $request->input('remarks');
         $attendance->save();
         // 休憩データ更新

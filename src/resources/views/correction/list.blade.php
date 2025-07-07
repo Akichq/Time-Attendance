@@ -43,7 +43,7 @@
                 @endforelse
             </tbody>
         </table>
-        <table class="request-list-table table-hidden" id="approved-table">
+        <table class="request-list-table" id="approved-table">
             <thead>
                 <tr>
                     <th>状態</th>
@@ -78,6 +78,7 @@
         const tabs = document.querySelectorAll('.request-tab');
         const pendingTable = document.getElementById('pending-table');
         const approvedTable = document.getElementById('approved-table');
+        approvedTable.style.display = 'none'; // 初期状態で非表示
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 tabs.forEach(t => t.classList.remove('active'));
