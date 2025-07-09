@@ -35,17 +35,17 @@
                         @error('clock_out_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
                     </td>
                 </tr>
-                @foreach($breaks as $i => $break)
+                @foreach($breaks as $breakIndex => $break)
                 <tr>
-                    <th>休憩{{ $i+1 }}</th>
+                    <th>休憩{{ $breakIndex+1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
-                            <input type="time" name="breaks[{{ $i }}][start]" value="{{ old('breaks.'.$i.'.start', $break->break_start_time ? \Carbon\Carbon::parse($break->break_start_time)->format('H:i') : '') }}">
+                            <input type="time" name="breaks[{{ $breakIndex }}][start]" value="{{ old('breaks.'.$breakIndex.'.start', $break->break_start_time ? \Carbon\Carbon::parse($break->break_start_time)->format('H:i') : '') }}">
                             <span class="attendance-detail-time-sep">〜</span>
-                            <input type="time" name="breaks[{{ $i }}][end]" value="{{ old('breaks.'.$i.'.end', $break->break_end_time ? \Carbon\Carbon::parse($break->break_end_time)->format('H:i') : '') }}">
+                            <input type="time" name="breaks[{{ $breakIndex }}][end]" value="{{ old('breaks.'.$breakIndex.'.end', $break->break_end_time ? \Carbon\Carbon::parse($break->break_end_time)->format('H:i') : '') }}">
                         </div>
-                        @error('breaks.'.$i.'.start')<div class="attendance-error-message">{{ $message }}</div>@enderror
-                        @error('breaks.'.$i.'.end')<div class="attendance-error-message">{{ $message }}</div>@enderror
+                        @error('breaks.'.$breakIndex.'.start')<div class="attendance-error-message">{{ $message }}</div>@enderror
+                        @error('breaks.'.$breakIndex.'.end')<div class="attendance-error-message">{{ $message }}</div>@enderror
                     </td>
                 </tr>
                 @endforeach
@@ -53,10 +53,12 @@
                     <th>休憩{{ count($breaks)+1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
-                            <input type="time" name="breaks[{{ count($breaks) }}][start]" value="">
+                            <input type="time" name="breaks[{{ count($breaks) }}][start]" value="{{ old('breaks.'.count($breaks).'.start') }}">
                             <span class="attendance-detail-time-sep">〜</span>
-                            <input type="time" name="breaks[{{ count($breaks) }}][end]" value="">
+                            <input type="time" name="breaks[{{ count($breaks) }}][end]" value="{{ old('breaks.'.count($breaks).'.end') }}">
                         </div>
+                        @error('breaks.'.count($breaks).'.start')<div class="attendance-error-message">{{ $message }}</div>@enderror
+                        @error('breaks.'.count($breaks).'.end')<div class="attendance-error-message">{{ $message }}</div>@enderror
                     </td>
                 </tr>
                 <tr>

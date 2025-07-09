@@ -90,6 +90,28 @@ class AttendanceCorrectionController extends Controller
 
         // 休憩時間の更新
         $requestedBreaks = json_decode($correction->requested_breaks, true);
+        $clockIn = \Carbon\Carbon::parse($correction->requested_clock_in_time)->format('H:i');
+        $clockOut = \Carbon\Carbon::parse($correction->requested_clock_out_time)->format('H:i');
+        // 既存の休憩時間をバリデーション
+        if (isset($requestedBreaks['existing'])) {
+            foreach ($requestedBreaks['existing'] as $index => $break) {
+                if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
+                    if ($break['break_start_time'] < $clockIn || $break['break_end_time'] > $clockOut) {
+                        return back()->withErrors(["breaks.$index.break_start_time" => '休憩時間が勤務時間外です'])->withInput();
+                    }
+                }
+            }
+        }
+        // 新しい休憩時間をバリデーション
+        if (isset($requestedBreaks['new'])) {
+            foreach ($requestedBreaks['new'] as $index => $break) {
+                if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
+                    if ($break['break_start_time'] < $clockIn || $break['break_end_time'] > $clockOut) {
+                        return back()->withErrors(["new_breaks.$index.break_start_time" => '休憩時間が勤務時間外です'])->withInput();
+                    }
+                }
+            }
+        }
         // 既存の休憩時間を更新
         if (isset($requestedBreaks['existing'])) {
             foreach ($requestedBreaks['existing'] as $index => $break) {

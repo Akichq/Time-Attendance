@@ -19,6 +19,7 @@ class Attendance extends Model
         'user_id',
         'clock_in_time',
         'clock_out_time',
+        'remarks',
     ];
 
     /**

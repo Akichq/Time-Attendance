@@ -33,18 +33,18 @@
                         @error('clock_out_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
                     </td>
                 </tr>
-                @foreach($breaks as $i => $break)
+                @foreach($breaks as $breakIndex => $break)
                     @if($break)
                     <tr>
-                        <th>休憩{{ $i+1 }}</th>
+                        <th>休憩{{ $breakIndex+1 }}</th>
                         <td>
                             <div class="attendance-detail-time-row">
-                                <input type="time" name="breaks[{{ $i }}][break_start_time]" value="{{ old('breaks.'.$i.'.break_start_time', $break->break_start_time ? \Carbon\Carbon::parse($break->break_start_time)->format('H:i') : '') }}" {{ $isPending ? 'disabled' : '' }}>
+                                <input type="time" name="breaks[{{ $breakIndex }}][break_start_time]" value="{{ old('breaks.'.$breakIndex.'.break_start_time', $break->break_start_time ? \Carbon\Carbon::parse($break->break_start_time)->format('H:i') : '') }}" {{ $isPending ? 'disabled' : '' }}>
                                 <span class="attendance-detail-time-sep">〜</span>
-                                <input type="time" name="breaks[{{ $i }}][break_end_time]" value="{{ old('breaks.'.$i.'.break_end_time', $break->break_end_time ? \Carbon\Carbon::parse($break->break_end_time)->format('H:i') : '') }}" {{ $isPending ? 'disabled' : '' }}>
+                                <input type="time" name="breaks[{{ $breakIndex }}][break_end_time]" value="{{ old('breaks.'.$breakIndex.'.break_end_time', $break->break_end_time ? \Carbon\Carbon::parse($break->break_end_time)->format('H:i') : '') }}" {{ $isPending ? 'disabled' : '' }}>
                             </div>
-                            @error('breaks.'.$i.'.break_start_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
-                            @error('breaks.'.$i.'.break_end_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
+                            @error('breaks.'.$breakIndex.'.break_start_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
+                            @error('breaks.'.$breakIndex.'.break_end_time')<div class="attendance-error-message">{{ $message }}</div>@enderror
                         </td>
                     </tr>
                     @endif

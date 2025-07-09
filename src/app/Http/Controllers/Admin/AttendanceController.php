@@ -84,10 +84,29 @@ class AttendanceController extends Controller
             'remarks.required' => '備考を記入してください。',
         ];
         $validated = $request->validate($rules, $messages);
-        // 勤怠データ更新
+
         $clockIn = $request->input('clock_in_time');
         $clockOut = $request->input('clock_out_time');
-        // 日付部分は元のまま、時刻のみを更新
+
+        // 休憩時間が勤務時間外かチェック
+        foreach ([0,1] as $i) {
+            $start = $request->input("breaks.$i.start");
+            $end = $request->input("breaks.$i.end");
+            $errors = [];
+            if ($start && $end) {
+                if ($start < $clockIn || $start > $clockOut) {
+                    $errors["breaks.$i.start"] = '出勤時間もしくは退勤時間が不適切な値です';
+                }
+                if ($end > $clockOut) {
+                    $errors["breaks.$i.end"] = '出勤時間もしくは退勤時間が不適切な値です';
+                }
+                if (!empty($errors)) {
+                    return back()->withErrors($errors)->withInput();
+                }
+            }
+        }
+
+        // 勤怠データ更新
         $originalDate = $attendance->clock_in_time ? (new \Carbon\Carbon($attendance->clock_in_time))->format('Y-m-d') : now()->format('Y-m-d');
         $attendance->clock_in_time = $originalDate . ' ' . $clockIn . ':00';
         $attendance->clock_out_time = $originalDate . ' ' . $clockOut . ':00';
@@ -104,6 +123,19 @@ class AttendanceController extends Controller
         $newIndex = count($attendance->breaks);
         $newStart = $request->input("breaks.$newIndex.start");
         $newEnd = $request->input("breaks.$newIndex.end");
+        // 新規休憩欄の勤務時間外バリデーション
+        if ($newStart && $newEnd) {
+            $errors = [];
+            if ($newStart < $clockIn || $newStart > $clockOut) {
+                $errors["breaks.$newIndex.start"] = '出勤時間もしくは退勤時間が不適切な値です';
+            }
+            if ($newEnd > $clockOut) {
+                $errors["breaks.$newIndex.end"] = '出勤時間もしくは退勤時間が不適切な値です';
+            }
+            if (!empty($errors)) {
+                return back()->withErrors($errors)->withInput();
+            }
+        }
         if ($newStart && $newEnd) {
             $attendance->breaks()->create([
                 'break_start_time' => $newStart,
@@ -135,8 +167,8 @@ class AttendanceController extends Controller
         // 日本語曜日配列
         $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
         for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
-            $attendance = $attendances->first(function($a) use ($date) {
-                return $a->clock_in_time && \Carbon\Carbon::parse($a->clock_in_time)->format('Y-m-d') === $date->format('Y-m-d');
+            $attendance = $attendances->first(function($attendance) use ($date) {
+                return $attendance->clock_in_time && \Carbon\Carbon::parse($attendance->clock_in_time)->format('Y-m-d') === $date->format('Y-m-d');
             });
             // 休憩合計
             $break = '';
@@ -189,8 +221,8 @@ class AttendanceController extends Controller
         $rows = [];
         $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
         for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
-            $attendance = $attendances->first(function($a) use ($date) {
-                return $a->clock_in_time && \Carbon\Carbon::parse($a->clock_in_time)->format('Y-m-d') === $date->format('Y-m-d');
+            $attendance = $attendances->first(function($attendance) use ($date) {
+                return $attendance->clock_in_time && \Carbon\Carbon::parse($attendance->clock_in_time)->format('Y-m-d') === $date->format('Y-m-d');
             });
             $break = '';
             $total = '';

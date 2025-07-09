@@ -142,7 +142,7 @@ class AttendanceDetailTest extends TestCase
             'remarks' => 'テスト備考',
         ]);
 
-        $response->assertSessionHasErrors(['breaks.0.start' => '休憩時間が勤務時間外です。']);
+        $response->assertSessionHasErrors(['breaks.0.start' => '出勤時間もしくは退勤時間が不適切な値です']);
     }
 
     /**
@@ -184,7 +184,7 @@ class AttendanceDetailTest extends TestCase
             'remarks' => 'テスト備考',
         ]);
 
-        $response->assertSessionHasErrors(['breaks.0.end' => '休憩時間が勤務時間外です。']);
+        $response->assertSessionHasErrors(['breaks.0.end' => '出勤時間もしくは退勤時間が不適切な値です']);
     }
 
     /**

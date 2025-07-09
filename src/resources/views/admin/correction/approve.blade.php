@@ -37,9 +37,9 @@
                     $breaks = $requestedBreaks['existing'] ?? [];
                     $newBreaks = $requestedBreaks['new'] ?? [];
                 @endphp
-                @foreach($breaks as $i => $break)
+                @foreach($breaks as $breakIndex => $break)
                 <tr>
-                    <th>休憩{{ $i+1 }}</th>
+                    <th>休憩{{ $breakIndex + 1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
                             <span>{{ $break['break_start_time'] ?? '--:--' }}</span>
@@ -49,9 +49,9 @@
                     </td>
                 </tr>
                 @endforeach
-                @foreach($newBreaks as $i => $break)
+                @foreach($newBreaks as $breakIndex => $break)
                 <tr>
-                    <th>休憩{{ count($breaks) + $i + 1 }}</th>
+                    <th>休憩{{ count($breaks) + $breakIndex + 1 }}</th>
                     <td>
                         <div class="attendance-detail-time-row">
                             <span>{{ $break['break_start_time'] ?? '--:--' }}</span>
