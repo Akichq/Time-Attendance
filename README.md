@@ -162,10 +162,3 @@ php artisan test
 ### ER 図
 
 ![ER図](./ER.png)
-
----
-
-## 補足
-
-- mailhog の Web UI は http://localhost:8025 です。
-- 不明点があれば開発チームまでご連絡ください。
